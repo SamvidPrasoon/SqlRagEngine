@@ -131,3 +131,11 @@ export function validateSQL(
   }
   return errors;
 }
+
+export function enforceLimit(sql: string): string {
+  const max = process.env.MAX_ROWS_RETURNED ?? "500";
+  if (/^\s*SELECT/i.test(sql) && !/LIMIT\s+\d+/i.test(sql)) {
+    return sql.replace(/;?\s*$/, "") + ` LIMIT ${max}`;
+  }
+  return sql;
+}

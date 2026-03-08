@@ -120,15 +120,3 @@ export async function retrieveSchema(question: string): Promise<string> {
   }
 }
 
-export function scoreContextPrecision(
-  retrievedContext: string,
-  sql: string,
-): number {
-  const sqlTokens = new Set(sql.toLowerCase().match(/\b[a-z_]{3,}\b/g) ?? []);
-  const contextTokens = new Set(
-    retrievedContext.toLowerCase().match(/\b[a-z_]{3,}\b/g) ?? [],
-  );
-
-  const overlap = [...sqlTokens].filter((t) => contextTokens.has(t)).length;
-  return Math.min(1, overlap / Math.max(sqlTokens.size, 1));
-}
