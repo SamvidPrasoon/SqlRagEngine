@@ -1,4 +1,5 @@
 import { MemoryState } from "../memory/memory.js";
+import type { Trace } from "../observability/tracer.js";
 
 export type AppMode = "business" | "dev";
 export type RiskLevel = "safe" | "moderate" | "dangerous" | "blocked";
@@ -6,9 +7,12 @@ export type HITLStatus = "pending" | "approved" | "rejected";
 
 export interface AgentState {
   //  Input
-  userMessage: string; // what the user asked
-  sessionId: string; // which session this belongs to
-  mode: AppMode; // business = read only, dev = full access
+  userMessage: string;
+  sessionId: string;
+  mode: AppMode;
+
+  //  Trace
+  trace?: Trace;
 
   //  Memory (flows in from outside)
   memoryState: MemoryState;

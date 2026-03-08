@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { buildAgent } from "../../src/graph/agent.js";
 import { MemoryState } from "../../src/memory/memory.js";
+import { createTrace } from "../../src/observability/tracer.js";
 
 const agent = buildAgent();
 
@@ -14,6 +15,12 @@ async function ask(
   console.log(`❓ ${question}`);
   console.log(`🔒 Mode: ${mode}`);
   console.log("═".repeat(60));
+
+  const trace = createTrace({
+    sessionId: "test-session",
+    input: question,
+    mode,
+  });
 
   const result = await agent.invoke({
     userMessage: question,
@@ -30,7 +37,10 @@ async function ask(
     hitlRequired: false,
     retryCount: 0,
     finalResponse: "",
+    trace,
   });
+
+  trace.end({ finalResponse: result.finalResponse });
 
   console.log("\n✅ FINAL RESPONSE:");
   console.log(result.finalResponse);

@@ -12,6 +12,7 @@ import {
   HITLStatus,
   AgentState,
 } from "../types/agentState.js";
+import type { Trace } from "../observability/tracer.js";
 import { checkGuardrailsNode } from "./nodes/check-guardrails.js";
 import { executeQueryNode } from "./nodes/execute-query.js";
 import { generateSQL } from "./nodes/generate-sql.js";
@@ -27,6 +28,9 @@ const StateAnnotation = Annotation.Root({
   userMessage: Annotation<string>({ reducer: (_, b) => b }),
   sessionId: Annotation<string>({ reducer: (_, b) => b }),
   mode: Annotation<AppMode>({ reducer: (_, b) => b }),
+
+  // Trace
+  trace: Annotation<Trace | undefined>({ reducer: (_, b) => b }),
 
   // Memory
   memoryState: Annotation<MemoryState>({ reducer: (_, b) => b }),
@@ -106,7 +110,7 @@ function routeAfterHITL(state: GraphState): string {
 }
 
 // BUILD AND COMPILE THE GRAPH
-
+const checkpointer = new MemorySaver();
 export function buildAgent() {
   const graph = new StateGraph(StateAnnotation)
 
@@ -154,6 +158,6 @@ export function buildAgent() {
     .addEdge("update_memory", END);
 
   // compile()
-  const checkpointer = new MemorySaver();
+
   return graph.compile({ checkpointer });
 }
