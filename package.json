@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server/index.ts",
+    "dev:frontend": "cd frontend && npm run dev",
     "seed": "tsx scripts/seed.ts",
     "ingest": "tsx scripts/ingest-schema.ts",
     "eval": "tsx scripts/run-evals.ts"
